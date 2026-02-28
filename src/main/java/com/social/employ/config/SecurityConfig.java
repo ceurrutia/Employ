@@ -31,13 +31,20 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
+
+                    //0. swagger publico
+                    req.requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html"
+                    ).permitAll();
+
                     // 1. RUTAS PÚBLICAS (Sin token)
                     req.requestMatchers(HttpMethod.POST, "/api/auth/users/login", "/api/auth/users/register").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
                     req.requestMatchers(HttpMethod.GET, "/api/offers/**").permitAll();
 
-                    // 2. REGLAS DE ADMIN (Específicas y prioritarias)
-                    // Usamos hasRole porque tu filtro pone "ROLE_ADMIN"
+                    // 2. REGLAS DE ADMIN
                     req.requestMatchers(HttpMethod.GET, "/api/auth/users").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.GET, "/api/auth/users/active").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.GET, "/api/auth/users/inactive").hasRole("ADMIN");
@@ -47,7 +54,7 @@ public class SecurityConfig {
                     req.requestMatchers("/api/applications/**").authenticated();
 
                     // 4. RUTAS DE USUARIOS GENERALES (Me, perfiles, etc)
-                    // IMPORTANTE: Esta va al final de las de auth/users para no pisar las de ADMIN
+                    // IMPORTANTE: Esta va al final de las de auth/users para no pisarme las de ADMIN
                     req.requestMatchers("/api/auth/users/**").authenticated();
 
                     req.anyRequest().authenticated();

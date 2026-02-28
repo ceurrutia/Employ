@@ -8,8 +8,56 @@ Implementa **Spring Security** junto con **JWT (JSON Web Tokens)** para gestiona
 
 La comunicación de datos se realiza mediante **Java Records**, utilizados como DTOs (Data Transfer Objects) inmutables que aseguran la integridad de la información y simplifican la validación de payloads. Todo el ecosistema está orquestado con Docker, asegurando que el entorno de desarrollo y producción sean idénticos mediante la compilación interna con **Maven y Java 21**.
 
+El proyecto utiliza **Docker Compose** para orquestar la aplicación y la base de datos MySQL, asegurando que el entorno sea idéntico en cualquier máquina.
+
+## Requisitos previos
+
+* Docker y Docker Compose instalados.
+* Archivo .env configurado en la raíz (ver sección de Variables de entorno).
 ---
 
+### Inicio Rápido
+
+1. Clone el repositorio: `git clone https://github.com/ceurrutia/Employ.git`
+2. Configure su `.env` basado en el ejemplo.
+3. Ejecute: `docker-compose up -d`
+4. La API estará disponible en `http://localhost:8080` y Swagger en `http://localhost:8080/swagger-ui.html`.
+
+## Variables de entorno
+
+Crea un archivo .env en la raiz del proyecto
+
+```
+# Base de Datos (MySQL)
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=nombre_base_de_datos
+DB_USER=tu_usuario
+DB_PASSWORD=tu_contraseña
+DB_ROOT_PASSWORD=tu_root_password
+
+# Seguridad (JWT)
+# Se recomienda una clave de 64 caracteres para algoritmos HMAC512
+JWT_SECRET=una_clave_muy_secreta_y_aleatoria_de_clave_64
+JWT_EXPIRATION=86400000
+
+# Almacenamiento
+UPLOAD_DIR=./uploads
+```
+---
+
+# Seguridad (JWT)
+
+Se recomienda una clave de 64 caracteres para algoritmos HMAC512
+```
+JWT_SECRET=tu_clave_secreta_super_larga_y_aleatoria
+JWT_EXPIRATION=86400000
+```
+
+# Almacenamiento
+UPLOAD_DIR=./uploads
+
+---
 ## Roles y Permisos
 
 | Acción | Público | USER | COMPANY | ADMIN |
@@ -115,4 +163,11 @@ La API responde con formatos estandarizados para errores de negocio y validació
     "status": "HIRED"
 }
 
-```    
+```
+
+## 🛠️ Próximas Mejoras (Roadmap)
+
+* [ ] **Carga de CVs:** Integración con AWS S3 para gestión de documentos PDF.
+* [ ] **Notificaciones:** Implementación de Amazon SES o SendGrid para avisos de cambio de estado.
+* [ ] **Búsqueda Avanzada:** Filtros dinámicos mediante Spring Data Specifications.
+* [ ] **Auditoría:** Trazabilidad completa de cambios en ofertas mediante Hibernate Envers.
