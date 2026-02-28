@@ -36,7 +36,9 @@ public class SecurityConfig {
                     req.requestMatchers(
                             "/v3/api-docs/**",
                             "/swagger-ui/**",
-                            "/swagger-ui.html"
+                            "/swagger-ui.html",
+                            "/swagger-resources/**",
+                            "/webjars/**"
                     ).permitAll();
 
                     // 1. RUTAS PÚBLICAS (Sin token)
@@ -60,6 +62,15 @@ public class SecurityConfig {
                     req.anyRequest().authenticated();
                 })
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"message\": \"Logout exitoso\"}");
+                            response.getWriter().flush();
+                        })
+                )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
